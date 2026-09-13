@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:resolute
 
 ARG DB_NAME
 ARG DB_LOGIN
@@ -21,28 +21,27 @@ RUN echo repository is $BUILD_REPO
 # following two commands suppose to be reused from cache
 RUN apt update &&  apt install --no-install-recommends --no-install-suggests -y git ca-certificates
 
-RUN apt-get install --no-install-recommends --no-install-suggests -y software-properties-common
-RUN add-apt-repository -y ppa:jonathonf/ffmpeg-4
-RUN apt update
+# RUN apt-get install --no-install-recommends --no-install-suggests -y software-properties-common
+# RUN add-apt-repository -y ppa:jonathonf/ffmpeg-4
+# RUN apt update
 RUN apt-get install --no-install-recommends --no-install-suggests -y \ 
-        build-essential \
-        cmake \
-        ffmpeg \
-        graphicsmagick-libmagick-dev-compat \
-        libavcodec-dev \
-        libavformat-dev \
-        libavutil-dev \
-        libcurl4-openssl-dev \
-        libgraphicsmagick++-dev \
-        libhpdf-dev \
-        libmaxminddb-dev \
-        libmysqlclient-dev \
-        libssl-dev \
-        libwebp-dev \
-        libarchive-dev \
-        rapidjson-dev \
-        pkg-config \
-        wget
+    build-essential \
+    cmake \
+    ffmpeg \
+    libavcodec-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libcurl4-openssl-dev \
+    libmagick++-dev \
+    libhpdf-dev \
+    libmaxminddb-dev \
+    libmysqlclient-dev \
+    libssl-dev \
+    libwebp-dev \
+    libarchive-dev \
+    rapidjson-dev \
+    pkg-config \
+    wget
 
 #####################
 # locale generation #
@@ -58,23 +57,27 @@ RUN export LC_ALL=en_US.utf8
 ###############
 COPY . ${GIT_FOLDER}
 WORKDIR ${GIT_FOLDER}
-RUN git clone --depth 1 https://github.com/IvanKuchin/backend_pi.git ./src/pi
-
+RUN if test -d "./src/pi"; then \
+    echo "Directory ./src/pi already exists"; \
+    else \
+    git clone --depth 1 https://github.com/IvanKuchin/backend_pi.git ./src/pi; \
+    fi
 ######################
 # libxl installation #
 ######################
 RUN if test -f "./libxl-3.8.4.0/lib64/libxl.so"; then \
-       cp ./libxl-3.8.4.0/lib64/libxl.so /usr/local/lib/ \
-       && ldconfig; \
+    cp ./libxl-3.8.4.0/lib64/libxl.so /usr/local/lib/ \
+    && ldconfig; \
     fi
 
 #############################
 # libwkhtmltox installation #
+#  DEPRECATED               #
 #############################
-RUN if test -d "./wkhtmltox"; then \
-       wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.trusty_amd64.deb \
-       && apt install --no-install-recommends --no-install-suggests -y ./wkhtmltox*.deb; \
-    fi
+# RUN if test -d "./wkhtmltox"; then \
+#     wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.trusty_amd64.deb \
+#     && apt install --no-install-recommends --no-install-suggests -y ./wkhtmltox*.deb; \
+#     fi
 
 ##################
 # save commit id #
@@ -87,10 +90,10 @@ RUN git rev-parse HEAD > ./supplemental/git/git_commit_id
 RUN mkdir build
 RUN cd build \
     && cmake \
-       -DPROJECT_NAME=__BUILD_REPO__ \
-       -DMAIN_SUBDOMAIN=www \
-       -DIMAGE_SUBDOMAIN=images \
-       .. \
+    -DPROJECT_NAME=__BUILD_REPO__ \
+    -DMAIN_SUBDOMAIN=www \
+    -DIMAGE_SUBDOMAIN=images \
+    .. \
     && make -j2
 
 ###########################

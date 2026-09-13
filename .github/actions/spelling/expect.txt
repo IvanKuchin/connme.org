@@ -66,6 +66,7 @@ groupid
 grouplogo
 grouplogouploader
 HDR
+HDRI
 helpdesk
 href
 html
@@ -97,6 +98,7 @@ LOGDIR
 lostindb
 lostpictures
 Magick
+MAGICKCORE
 maxsalary
 mbstowcs
 messageid

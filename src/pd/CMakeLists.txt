@@ -50,6 +50,12 @@ set(PROJECT_PD_INCLUDE_DIRECTORIES
 
 SET(PROJECT_ALL_INCLUDE_DIRECTORIES ${PROJECT_PI_INCLUDE_DIRECTORIES} ${PROJECT_PD_INCLUDE_DIRECTORIES})
 
+# Add mandatory definitions for ImageMagick 7 compilation stability
+add_compile_definitions(
+    MAGICKCORE_QUANTUM_DEPTH=16
+    MAGICKCORE_HDRI_ENABLE=1
+)
+
 # ---- list of independent libraries
 foreach(INDEPENDENT_LIBRARY_SRC ${INDEPENDENT_LIBRARIES_SRCs})
     string(REGEX REPLACE "(^.*/|\\.[^.]*$)" "" file_without_ext ${INDEPENDENT_LIBRARY_SRC})

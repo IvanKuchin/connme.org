@@ -99,7 +99,7 @@ bool Test5()
 {
 	auto				result			= true;
 	auto				error_message	= ""s;
-	auto				amount			= 1000000000000000 - 1;
+	auto				amount			= 1'000'000'000'000'000 - 1;
 	C_Price_Spelling	price(amount);
 	auto				spelling		= price.Spelling();
 
