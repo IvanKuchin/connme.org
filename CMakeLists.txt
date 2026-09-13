@@ -33,7 +33,8 @@ message( "Web-server domain: "        ${MAIN_DOMAIN_NAME} )
 message( "Image web domain: "         ${IMAGE_DOMAIN_NAME} )
 message( "Package version: "          ${BUILD_RELEASE_NUMBER})
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # --- changing CXX_FLAGS is _not_ the best practise
 # --- cmake 3.12 have -D switch, capable remove definition per-target
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -pedantic")

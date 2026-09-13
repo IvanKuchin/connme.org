@@ -1,0 +1,3 @@
+# ignore intermediate build files
+**/Dockerfile.temp
+**/Dockerfile.temp[0-9]*

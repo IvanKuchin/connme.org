@@ -40,6 +40,10 @@ git_commit_id
 # ignore private files
 *.original
 
+# ignore intermediate build files
+**/Dockerfile.temp
+**/Dockerfile.temp[0-9]*
+
 #Ignore build files
 CMakeCache.txt
 CMakeFiles

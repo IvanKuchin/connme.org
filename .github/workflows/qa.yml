@@ -48,7 +48,7 @@ jobs:
       # Checkout the code base #
       ##########################
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
 
      #############################
      # Init deployment variables #
@@ -56,12 +56,19 @@ jobs:
       - name: init deploymnet variables
         id: set_variables
         run: |
-          echo ::set-output name=BUILD_RELEASE::${GITHUB_REF#refs/tags/}
-          echo ::set-output name=BUILD_RELEASE_MAJOR::`echo ${GITHUB_REF%%.*} | awk -F/ '{ print v$3; }'`
-          echo ::set-output name=BUILD_DATE::`date -u +'%Y-%m-%dT%H:%M:%SZ'`
-          echo ::set-output name=BUILD_REPO::$(echo ${GITHUB_REPOSITORY} | awk -F/ '{ print $2; }')
-          echo ::set-output name=BUILD_BRANCH::`git branch | grep \* | awk -F\  '{ print $2; }'`
-          echo ::set-output name=DOCKER_NET::`docker network ls --filter name=github --format "{{.Name}}"`
+          BUILD_RELEASE="${GITHUB_REF#refs/tags/}"
+          BUILD_RELEASE_MAJOR="$(echo "${GITHUB_REF%%.*}" | awk -F/ '{ print $3; }')"
+          BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          BUILD_REPO="$(echo "${GITHUB_REPOSITORY}" | awk -F/ '{ print $2; }')"
+          BUILD_BRANCH="$(git branch | grep \* | awk -F\  '{ print $2; }')"
+          DOCKER_NET="$(docker network ls --filter name=github --format "{{.Name}}")"
+
+          echo "BUILD_RELEASE=$BUILD_RELEASE" >> "$GITHUB_OUTPUT"
+          echo "BUILD_RELEASE_MAJOR=$BUILD_RELEASE_MAJOR" >> "$GITHUB_OUTPUT"
+          echo "BUILD_DATE=$BUILD_DATE" >> "$GITHUB_OUTPUT"
+          echo "BUILD_REPO=$BUILD_REPO" >> "$GITHUB_OUTPUT"
+          echo "BUILD_BRANCH=$BUILD_BRANCH" >> "$GITHUB_OUTPUT"
+          echo "DOCKER_NET=$DOCKER_NET" >> "$GITHUB_OUTPUT"
       - name: print deploymnet variables
         run: |
           echo $GITHUB_REF
@@ -91,14 +98,14 @@ jobs:
       # Setup Docker build X #
       ########################
       #- name: Setup BuildX
-      #  uses: docker/setup-buildx-action@v1
+      #  uses: docker/setup-buildx-action@v3
 
       ###########################################
       # Build and Push containers to registries #
       ###########################################
       #- name: Build qa container
       #  if: success()
-      #  uses: docker/build-push-action@v2
+      #  uses: docker/build-push-action@v6
       #  with:
       #    context: .
       #    file: ./supplemental/docker/qa/Dockerfile
